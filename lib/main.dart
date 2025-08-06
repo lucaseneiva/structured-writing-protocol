@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:structured_writing_protocol/presentation/home_page.dart';
-
+import 'package:structured_writing_protocol/theme/app_theme.dart';
 void main() {
   runApp((const ProviderScope(child: MyApp())));
 }
@@ -14,11 +14,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        //THEME
-        scaffoldBackgroundColor: Colors.amber,
-      ),
+      theme: customTheme,
       home: HomePage(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }

@@ -12,7 +12,7 @@ class FakeWritingRepositoryImpl implements WritingRepository {
     await Future.delayed(const Duration(milliseconds: 300)); // Simula uma pequena demora
     return List.from(_cycles);
   }
-
+  
   @override
   Future<void> startNewCycle(Cycle cycle) async {
     // Adiciona o novo ciclo na nossa lista.
