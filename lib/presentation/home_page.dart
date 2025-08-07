@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers.dart'; // Nosso arquivo de providers
+import 'package:structured_writing_protocol/presentation/widgets/sessions_progress_card.dart';
 
 // Usamos ConsumerWidget para poder "ouvir" os providers.
 class HomePage extends ConsumerWidget {
@@ -15,7 +16,7 @@ class HomePage extends ConsumerWidget {
       appBar: AppBar(
         centerTitle: true,
         title: const Text("Ciclo Atual"),
-        
+      
       ),
       drawer: Drawer(
         child: Column( // Adicionado para estrutura
@@ -40,6 +41,7 @@ class HomePage extends ConsumerWidget {
           ],
         ),
       ),
+      body: Column(children: [SessionsProgressCard(totalNumberOfSessions: 4, currentSession: 1)],),
     );
   }
 }
