@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: customTheme,
-      home: SessionNoteView(sessionNumber: 5, controller: TextEditingController(), cycleName: 'Meus Medos', content: "aaaaaaaaa aaaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaa aaaaaaaaa aaaaaaaaa aaaaaaaaa"),
+      home: HomePage(),
       debugShowCheckedModeBanner: false,
     );
   }

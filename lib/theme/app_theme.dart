@@ -14,7 +14,10 @@ final ThemeData customTheme = ThemeData(
     onPrimary: AppColors.vanillaMonlight,
     onSecondary: AppColors.velvetCharcoal,
     onSurface: AppColors.velvetCharcoal,
+  
   ),
+
+  dividerColor: Colors.transparent,
   // Cssico, acolhedor
   textTheme: GoogleFonts.loraTextTheme(
     const TextTheme(

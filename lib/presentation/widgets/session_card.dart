@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:structured_writing_protocol/theme/app_colors.dart';
+
 class SessionCard extends StatelessWidget {
   final int sessionNumber;
   final String dateFormatted; // ex: "07 ago 2025"
@@ -18,7 +19,8 @@ class SessionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final borderColor = isNext ? AppColors.toastedPeach : AppColors.mauveGray;
 
-    return Container(
+    // O widget principal que será retornado
+    Widget cardContent = Container(
       margin: const EdgeInsets.symmetric(vertical: 6),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -29,13 +31,13 @@ class SessionCard extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Esquerda
+          // Esquerda (conteúdo da sessão)
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 "Sessão $sessionNumber",
-                style: TextStyle(
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: AppColors.velvetCharcoal,
                 ),
@@ -47,10 +49,7 @@ class SessionCard extends StatelessWidget {
                   const SizedBox(width: 4),
                   Text(
                     dateFormatted,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: AppColors.mauveGray,
-                    ),
+                    style: const TextStyle(fontSize: 12, color: AppColors.mauveGray),
                   ),
                 ],
               ),
@@ -62,10 +61,7 @@ class SessionCard extends StatelessWidget {
                     const SizedBox(width: 4),
                     const Text(
                       "15 minutos",
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: AppColors.mauveGray,
-                      ),
+                      style: TextStyle(fontSize: 12, color: AppColors.mauveGray),
                     ),
                   ],
                 ),
@@ -73,20 +69,33 @@ class SessionCard extends StatelessWidget {
             ],
           ),
 
-          // Direita - Botão
-          ElevatedButton(
-            onPressed: onPressed,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.toastedPeach,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              elevation: 0,
+          // Direita - Botão (só aparece se 'isNext' for verdadeiro)
+          if (isNext)
+            ElevatedButton(
+              onPressed: onPressed,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.toastedPeach,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                elevation: 0,
+              ),
+              child: const Text("Iniciar"),
             ),
-            child: Text(isNext ? "Iniciar" : "Ver"),
-          ),
         ],
       ),
     );
+
+    // Se NÃO for a próxima sessão, envolve o card com InkWell para torná-lo clicável
+    if (!isNext) {
+      return InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(12), // Para o efeito de splash seguir a borda
+        child: cardContent,
+      );
+    }
+
+    // Se for a próxima sessão, retorna o card como estava, sem o InkWell
+    return cardContent;
   }
 }
