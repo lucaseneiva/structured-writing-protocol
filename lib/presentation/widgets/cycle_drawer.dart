@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import 'package:structured_writing_protocol/providers.dart'; // Idealmente, os dados viriam daqui
-import 'package:structured_writing_protocol/domain/cycle.dart';
+import 'package:structured_writing_protocol/domain/entities/cycle.dart';
 // import 'package:structured_writing_protocol/domain/session.dart';
 import 'package:structured_writing_protocol/theme/app_colors.dart';
 

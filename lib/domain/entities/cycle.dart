@@ -1,4 +1,4 @@
-import 'package:structured_writing_protocol/domain/session.dart';
+import 'package:structured_writing_protocol/domain/entities/session.dart';
 
 class Cycle {
   final String id;

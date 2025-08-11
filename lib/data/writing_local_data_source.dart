@@ -4,7 +4,7 @@ class WritingLocalDataSource {
     return Future.value();
   }
 
-  Future<List<Map<String, dynamic>>> getAllCycles() {
+  Future<List<Map<String, dynamic>>> getAllCycles() async {
     print("Buscando todos os ciclos do banco de dados local...");
     return Future.value([]);
   }

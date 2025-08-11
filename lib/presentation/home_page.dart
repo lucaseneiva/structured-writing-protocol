@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers.dart'; // Nosso arquivo de providers
+import 'package:structured_writing_protocol/providers.dart'; 
 import 'package:structured_writing_protocol/presentation/widgets/circular_progress_text.dart';
 import 'package:structured_writing_protocol/presentation/widgets/session_card.dart';
 import 'package:structured_writing_protocol/presentation/widgets/cycle_drawer.dart';
-import 'package:intl/intl.dart'; // Para formatação de data
+import 'package:intl/intl.dart';
 
 // Usamos ConsumerWidget para poder "ouvir" os providers.
 class HomePage extends ConsumerWidget {
@@ -15,7 +15,6 @@ class HomePage extends ConsumerWidget {
     final activeCycle = ref.watch(activeCycleProvider);
     final cycles = ref.watch(cycleListProvider);
 
-    // Caso não tenha ciclo ativo
     if (activeCycle == null) {
       return Scaffold(
         appBar: AppBar(centerTitle: true, title: const Text("Ciclo Atual")),
@@ -42,7 +41,6 @@ class HomePage extends ConsumerWidget {
       );
     }
 
-    // Se tiver ciclo ativo, mostra o layout com dados reais
     return Scaffold(
       appBar: AppBar(centerTitle: true, title: const Text("Ciclo Atual")),
       drawer: CycleDrawer(),
@@ -51,7 +49,6 @@ class HomePage extends ConsumerWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // Progresso real do ciclo
               Center(
                 child: CircularProgressText(
                   completed: activeCycle.completedSessions,
@@ -62,7 +59,6 @@ class HomePage extends ConsumerWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Próxima sessão (se ainda não completou todas)
                   if (activeCycle.completedSessions <
                       activeCycle.totalSessions) ...[
                     const Text("Próxima Sessão"),
@@ -75,7 +71,6 @@ class HomePage extends ConsumerWidget {
                     const SizedBox(height: 32),
                   ],
 
-                  // Sessões anteriores (somente as já completadas)
                   if (activeCycle.sessions.isNotEmpty) ...[
                     const Text("Sessões Anteriores"),
                     ListView(
@@ -99,7 +94,6 @@ class HomePage extends ConsumerWidget {
                     ),
                   ],
 
-                  // Mensagem quando terminou todas as sessões
                   if (activeCycle.completedSessions >=
                       activeCycle.totalSessions) ...[
                     const SizedBox(height: 32),
@@ -216,10 +210,8 @@ class HomePage extends ConsumerWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                ref
-                    .read(cycleListProvider.notifier)
-                    .addNewCycle(sessionDuration, totalSessions);
-                Navigator.pop(context);
+                ref.read(createCycleProvider({'duration': sessionDuration,
+                  'total': totalSessions,}));
               },
               child: const Text("Criar"),
             ),

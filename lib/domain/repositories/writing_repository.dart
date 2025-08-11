@@ -1,5 +1,5 @@
-import 'package:structured_writing_protocol/domain/cycle.dart';
-import 'package:structured_writing_protocol/domain/session.dart';
+import 'package:structured_writing_protocol/domain/entities/cycle.dart';
+import 'package:structured_writing_protocol/domain/entities/session.dart';
 
 abstract class WritingRepository {
   Future<void> saveSession(String cycleId, Session session);

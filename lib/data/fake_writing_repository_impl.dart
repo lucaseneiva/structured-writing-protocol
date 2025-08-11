@@ -1,6 +1,6 @@
-import 'package:structured_writing_protocol/domain/cycle.dart';
-import 'package:structured_writing_protocol/domain/session.dart';
-import 'package:structured_writing_protocol/domain/writing_repository.dart';
+import 'package:structured_writing_protocol/domain/entities/cycle.dart';
+import 'package:structured_writing_protocol/domain/entities/session.dart';
+import 'package:structured_writing_protocol/domain/repositories/writing_repository.dart';
 
 class FakeWritingRepositoryImpl implements WritingRepository {
   final List<Cycle> _cycles = [];
