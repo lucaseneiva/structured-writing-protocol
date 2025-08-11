@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import 'package:structured_writing_protocol/providers.dart'; // Idealmente, os dados viriam daqui
 import 'package:structured_writing_protocol/domain/cycle.dart';
-import 'package:structured_writing_protocol/domain/session.dart';
+// import 'package:structured_writing_protocol/domain/session.dart';
 import 'package:structured_writing_protocol/theme/app_colors.dart';
 
 // --- MELHORIA 1: Mova a lista para fora do método build! ---
@@ -10,53 +10,7 @@ import 'package:structured_writing_protocol/theme/app_colors.dart';
 // o que é muito ruim para a performance.
 final List<Cycle> hardcodedCycles = [
   // --- CICLO 1 (PASSADO) ---
-  Cycle(
-    id: 'ciclo-01',
-    sessions: [
-      Session(
-          id: 's1-1',
-          text: "Primeira sessão, explorando a ideia central do projeto. Foi um bom começo.",
-          duration: 20, // em minutos
-          number: 1,
-          date: DateTime(2023, 10, 15, 9, 0)),
-      Session(
-          id: 's1-2',
-          text: "Desenvolvimento dos personagens. Criei o perfil do protagonista.",
-          duration: 30,
-          number: 2,
-          date: DateTime(2023, 10, 17, 10, 30)),
-      Session(
-          id: 's1-3',
-          text: "Revisão do primeiro capítulo e ajustes no ritmo da narrativa.",
-          duration: 15,
-          number: 3,
-          date: DateTime(2023, 10, 20, 8, 15)),
-    ],
-  ),
-  // ... outros ciclos
-  Cycle(
-    id: 'ciclo-03-atual',
-    sessions: [
-      Session(
-          id: 's3-1',
-          text: "Início do novo ciclo. Sessão curta para aquecer os motores.",
-          duration: 20,
-          number: 1,
-          date: DateTime.now().subtract(const Duration(days: 5))),
-      Session(
-          id: 's3-2',
-          text: "Escrevi sobre uma memória de infância para um flashback.",
-          duration: 20,
-          number: 2,
-          date: DateTime.now().subtract(const Duration(days: 3))),
-      Session(
-          id: 's3-3',
-          text: "Sessão de hoje, focada em um diálogo importante entre dois personagens.",
-          duration: 20,
-          number: 3,
-          date: DateTime.now().subtract(const Duration(hours: 2))),
-    ],
-  ),
+
 ];
 
 
@@ -75,7 +29,7 @@ class CycleDrawer extends ConsumerWidget {
         leading: const BackButton(),
         elevation: 0,
         backgroundColor: AppColors.vanillaMonlight,
-        centerTitle: true,
+        centerTitle: true, 
         title: const Text(
           "Ciclos Passados",
           style: TextStyle(color: AppColors.velvetCharcoal, fontSize: 22, fontWeight: FontWeight.w600),

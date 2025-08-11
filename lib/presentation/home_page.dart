@@ -4,6 +4,7 @@ import '../providers.dart'; // Nosso arquivo de providers
 import 'package:structured_writing_protocol/presentation/widgets/circular_progress_text.dart';
 import 'package:structured_writing_protocol/presentation/widgets/session_card.dart';
 import 'package:structured_writing_protocol/presentation/widgets/cycle_drawer.dart';
+import 'package:intl/intl.dart'; // Para formatação de data
 
 // Usamos ConsumerWidget para poder "ouvir" os providers.
 class HomePage extends ConsumerWidget {
@@ -11,51 +12,216 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // "ref.watch" ouve o provider. A tela vai reconstruir quando a lista de ciclos mudar.
+    final activeCycle = ref.watch(activeCycleProvider);
     final cycles = ref.watch(cycleListProvider);
 
+    // Caso não tenha ciclo ativo
+    if (activeCycle == null) {
+      return Scaffold(
+        appBar: AppBar(centerTitle: true, title: const Text("Ciclo Atual")),
+        // drawer: CycleDrawer(), arrumar o drawer
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                "Não há nenhum ciclo ativo no momento.",
+                style: TextStyle(fontSize: 16),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  _showCreateCycleDialog(context, ref);
+                },
+                child: const Text("Criar novo ciclo"),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // Se tiver ciclo ativo, mostra o layout com dados reais
     return Scaffold(
       appBar: AppBar(centerTitle: true, title: const Text("Ciclo Atual")),
       drawer: CycleDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(32.0),
-        child: Column(
-          children: [
-            Center(child: CircularProgressText(completed: 2, total: 5)),
-            SizedBox(height: 32),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("Próxima Sessão"),
-                SessionCard(
-                  sessionNumber: 3,
-                  dateFormatted: "07 ago 2025",
-                  isNext: true,
-                  onPressed: () => {},
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // Progresso real do ciclo
+              Center(
+                child: CircularProgressText(
+                  completed: activeCycle.completedSessions,
+                  total: activeCycle.totalSessions,
                 ),
-            
-                const SizedBox(height: 32),
-            
-                Text("Sessões Anteriores"),
-                ListView(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  children: [
+              ),
+              const SizedBox(height: 32),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Próxima sessão (se ainda não completou todas)
+                  if (activeCycle.completedSessions <
+                      activeCycle.totalSessions) ...[
+                    const Text("Próxima Sessão"),
                     SessionCard(
-                      sessionNumber: 2,
-                      dateFormatted: "05 ago 2025",
-                      isNext: false,
+                      sessionNumber: activeCycle.completedSessions + 1,
+                      dateFormatted: _getNextSessionDate(),
+                      isNext: true,
                       onPressed: () => {},
                     ),
-                    SessionCard(
-                      sessionNumber: 1,
-                      dateFormatted: "03 ago 2025",
-                      isNext: false,
-                      onPressed: () => {},
+                    const SizedBox(height: 32),
+                  ],
+
+                  // Sessões anteriores (somente as já completadas)
+                  if (activeCycle.sessions.isNotEmpty) ...[
+                    const Text("Sessões Anteriores"),
+                    ListView(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: activeCycle.sessions.asMap().entries.map((
+                        entry,
+                      ) {
+                        final index = entry.key;
+                        final session = entry.value;
+
+                        return SessionCard(
+                          sessionNumber: index + 1,
+                          dateFormatted: _formatDate(session.date),
+                          isNext: false,
+                          onPressed: () => {
+                            // Navegar para ver detalhes da sessão
+                          },
+                        );
+                      }).toList(),
                     ),
                   ],
-                ),
-              ],
+
+                  // Mensagem quando terminou todas as sessões
+                  if (activeCycle.completedSessions >=
+                      activeCycle.totalSessions) ...[
+                    const SizedBox(height: 32),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.green.shade50,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.green.shade200),
+                      ),
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.celebration,
+                            color: Colors.green.shade600,
+                            size: 48,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            "Parabéns!",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.green.shade700,
+                            ),
+                          ),
+                          Text(
+                            "Você completou todas as ${activeCycle.totalSessions} sessões deste ciclo!",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.green.shade600),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _formatDate(DateTime date) {
+    return DateFormat('dd MMM yyyy').format(date);
+  }
+
+  String _getNextSessionDate() {
+    // Por enquanto, retorna hoje. Você pode implementar lógica mais complexa
+    return DateFormat('dd MMM yyyy').format(DateTime.now());
+  }
+
+  void _showCreateCycleDialog(BuildContext context, WidgetRef ref) {
+    int sessionDuration = 25; // valor padrão
+    int totalSessions = 5; // valor padrão
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: const Text("Novo Ciclo"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  const Text("Duração (min): "),
+                  const Spacer(),
+                  DropdownButton<int>(
+                    value: sessionDuration,
+                    items: [15, 20, 25, 30, 45].map((duration) {
+                      return DropdownMenuItem(
+                        value: duration,
+                        child: Text("$duration min"),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        sessionDuration = value!;
+                      });
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  const Text("Total de sessões: "),
+                  const Spacer(),
+                  DropdownButton<int>(
+                    value: totalSessions,
+                    items: [4, 5].map((total) {
+                      return DropdownMenuItem(
+                        value: total,
+                        child: Text("$total sessões"),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        totalSessions = value!;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancelar"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                ref
+                    .read(cycleListProvider.notifier)
+                    .addNewCycle(sessionDuration, totalSessions);
+                Navigator.pop(context);
+              },
+              child: const Text("Criar"),
             ),
           ],
         ),

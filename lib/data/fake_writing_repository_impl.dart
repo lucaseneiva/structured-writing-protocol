@@ -3,16 +3,16 @@ import 'package:structured_writing_protocol/domain/session.dart';
 import 'package:structured_writing_protocol/domain/writing_repository.dart';
 
 class FakeWritingRepositoryImpl implements WritingRepository {
-  
   final List<Cycle> _cycles = [];
-  int _cycleIdCounter = 0;
 
   @override
   Future<List<Cycle>> getAllCycles() async {
-    await Future.delayed(const Duration(milliseconds: 300)); // Simula uma pequena demora
+    await Future.delayed(
+      const Duration(milliseconds: 300),
+    ); // Simula uma pequena demora
     return List.from(_cycles);
   }
-  
+
   @override
   Future<void> startNewCycle(Cycle cycle) async {
     // Adiciona o novo ciclo na nossa lista.
