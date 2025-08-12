@@ -5,6 +5,7 @@ import 'package:structured_writing_protocol/presentation/widgets/circular_progre
 import 'package:structured_writing_protocol/presentation/widgets/session_card.dart';
 import 'package:structured_writing_protocol/presentation/widgets/cycle_drawer.dart';
 import 'package:intl/intl.dart';
+import 'package:structured_writing_protocol/presentation/widgets/confirmation_dialog.dart';
 
 // Usamos ConsumerWidget para poder "ouvir" os providers.
 class HomePage extends ConsumerWidget {
@@ -31,7 +32,17 @@ class HomePage extends ConsumerWidget {
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
-                  _showCreateCycleDialog(context, ref);
+                  showDialog(
+                    context: context,
+                    builder: (_) => ConfirmationDialog(
+                      title: "Novo Ciclo",
+                      message: "Você quer iniciar um novo ciclo?",
+                      onConfirmation: () {
+                        ref.read(writingRepositoryProvider).startNewCycle();
+						ref.invalidate(cycleListProvider);
+                      },
+                    ),
+                  );
                 },
                 child: const Text("Criar novo ciclo"),
               ),
@@ -146,96 +157,5 @@ class HomePage extends ConsumerWidget {
   String _getNextSessionDate() {
     // Por enquanto, retorna hoje. Você pode implementar lógica mais complexa
     return DateFormat('dd MMM yyyy').format(DateTime.now());
-  }
-
-  void _showCreateCycleDialog(BuildContext context, WidgetRef ref) {
-    int sessionDuration = 25; // valor padrão
-    int totalSessions = 5; // valor padrão
-
-    showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
-          title: const Text("Novo Ciclo"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                children: [
-                  const Text("Duração (min): "),
-                  const Spacer(),
-                  DropdownButton<int>(
-                    value: sessionDuration,
-                    items: [15, 20, 25, 30, 45].map((duration) {
-                      return DropdownMenuItem(
-                        value: duration,
-                        child: Text("$duration min"),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        sessionDuration = value!;
-                      });
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  const Text("Total de sessões: "),
-                  const Spacer(),
-                  DropdownButton<int>(
-                    value: totalSessions,
-                    items: [4, 5].map((total) {
-                      return DropdownMenuItem(
-                        value: total,
-                        child: Text("$total sessões"),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        totalSessions = value!;
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("Cancelar"),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                // Marque como async
-                try {
-                  // Chame a função do repositório diretamente
-                  await ref.read(writingRepositoryProvider).startNewCycle();
-				
-                  // Invalide o provider que contém a lista de ciclos
-                  ref.invalidate(cycleListProvider);
-
-                  // Se houvesse um diálogo, você o fecharia aqui.
-                  // Navigator.pop(context);
-                } catch (e) {
-                  // Agora você pode facilmente tratar erros!
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text("Ocorreu um erro ao criar o ciclo: $e"),
-                      ),
-                    );
-                  }
-                }
-              },
-              child: const Text("Criar"),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
