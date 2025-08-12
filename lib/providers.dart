@@ -21,18 +21,10 @@ final activeCycleProvider = Provider<Cycle?>((ref) {
   );
 });
 
-final createCycleProvider = FutureProvider.family<void, Map<String, int>>((ref, params) async {
+final startNewCycleProvider = FutureProvider((ref) async {
   final repository = ref.read(writingRepositoryProvider);
   
-  final newCycle = Cycle(
-    id: DateTime.now().millisecondsSinceEpoch.toString(),
-    sessions: [],
-    sessionDuration: params['duration']!,
-    completedSessions: 0,
-    totalSessions: params['total']!,
-  );
-  
-  await repository.startNewCycle(newCycle);
+  await repository.startNewCycle();
   
   ref.invalidate(cycleListProvider);
 });

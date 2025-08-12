@@ -210,8 +210,7 @@ class HomePage extends ConsumerWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                ref.read(createCycleProvider({'duration': sessionDuration,
-                  'total': totalSessions,}));
+                ref.read(startNewCycleProvider);
               },
               child: const Text("Criar"),
             ),

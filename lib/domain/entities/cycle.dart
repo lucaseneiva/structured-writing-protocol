@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:structured_writing_protocol/domain/entities/session.dart';
 
 class Cycle {
@@ -22,6 +23,16 @@ class Cycle {
       completedSessions: 0,
       totalSessions: 0,
       sessionDuration: 0,
+    );
+  }
+
+  factory Cycle.newCycle() {
+    return Cycle(
+      completedSessions: 0,
+      totalSessions: 4,
+      sessionDuration: 15,
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      sessions: [],
     );
   }
   

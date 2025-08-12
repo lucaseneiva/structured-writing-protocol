@@ -6,5 +6,5 @@ abstract class WritingRepository {
 
   Future<List<Cycle>> getAllCycles();
 
-  Future<void> startNewCycle(Cycle cycle);
+  Future<void> startNewCycle();
 }

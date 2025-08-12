@@ -14,10 +14,10 @@ class FakeWritingRepositoryImpl implements WritingRepository {
   }
 
   @override
-  Future<void> startNewCycle(Cycle cycle) async {
-    // Adiciona o novo ciclo na nossa lista.
-    await Future.delayed(const Duration(milliseconds: 100)); // Simula
-    _cycles.add(cycle);
+  Future<void> startNewCycle() async {
+    await Future.delayed(const Duration(milliseconds: 100));
+    
+    _cycles.add(Cycle.newCycle());
     print("Ciclo adicionado! Total de ciclos: ${_cycles.length}");
   }
 
