@@ -7,13 +7,7 @@ class SessionCard extends StatelessWidget {
   final bool isNext;
   final VoidCallback onPressed;
 
-  const SessionCard({
-    Key? key,
-    required this.sessionNumber,
-    required this.dateFormatted,
-    required this.isNext,
-    required this.onPressed,
-  }) : super(key: key);
+  const SessionCard({super.key, required this.sessionNumber, required this.dateFormatted, required this.isNext, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {

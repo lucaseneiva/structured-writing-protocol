@@ -1,11 +1,23 @@
-import 'package:flutter/foundation.dart';
 import 'package:structured_writing_protocol/domain/entities/session.dart';
+import 'package:hive/hive.dart';
 
+part 'cycle.g.dart';
+
+@HiveType(typeId: 0)
 class Cycle {
+  @HiveField(0)
   final String id;
+  
+  @HiveField(1)
   final List<Session> sessions;
+
+  @HiveField(2)
   final int completedSessions;
+
+  @HiveField(3)
   final int totalSessions;
+
+  @HiveField(4)
   final int sessionDuration;
 
   Cycle({
@@ -35,7 +47,7 @@ class Cycle {
       sessions: [],
     );
   }
-  
+
   bool get isActive => completedSessions < totalSessions;
 
   bool isEmpty() {
