@@ -20,11 +20,3 @@ final activeCycleProvider = Provider<Cycle?>((ref) {
     data: (cycles) => cycles.firstWhereOrNull((cycle) => cycle.isActive),
   );
 });
-
-final startNewCycleProvider = FutureProvider((ref) async {
-  final repository = ref.read(writingRepositoryProvider);
-  
-  await repository.startNewCycle();
-  
-  ref.invalidate(cycleListProvider);
-});

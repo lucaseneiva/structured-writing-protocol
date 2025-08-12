@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:structured_writing_protocol/providers.dart'; 
+import 'package:structured_writing_protocol/providers.dart';
 import 'package:structured_writing_protocol/presentation/widgets/circular_progress_text.dart';
 import 'package:structured_writing_protocol/presentation/widgets/session_card.dart';
 import 'package:structured_writing_protocol/presentation/widgets/cycle_drawer.dart';
@@ -209,8 +209,27 @@ class HomePage extends ConsumerWidget {
               child: const Text("Cancelar"),
             ),
             ElevatedButton(
-              onPressed: () {
-                ref.read(startNewCycleProvider);
+              onPressed: () async {
+                // Marque como async
+                try {
+                  // Chame a função do repositório diretamente
+                  await ref.read(writingRepositoryProvider).startNewCycle();
+				
+                  // Invalide o provider que contém a lista de ciclos
+                  ref.invalidate(cycleListProvider);
+
+                  // Se houvesse um diálogo, você o fecharia aqui.
+                  // Navigator.pop(context);
+                } catch (e) {
+                  // Agora você pode facilmente tratar erros!
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Ocorreu um erro ao criar o ciclo: $e"),
+                      ),
+                    );
+                  }
+                }
               },
               child: const Text("Criar"),
             ),
