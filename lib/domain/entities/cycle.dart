@@ -42,7 +42,7 @@ class Cycle {
     return Cycle(
       completedSessions: 0,
       totalSessions: 4,
-      sessionDuration: 15,
+      sessionDuration: 1,
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       sessions: [],
     );

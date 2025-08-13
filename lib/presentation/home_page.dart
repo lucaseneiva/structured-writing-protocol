@@ -6,6 +6,7 @@ import 'package:structured_writing_protocol/presentation/widgets/session_card.da
 import 'package:structured_writing_protocol/presentation/widgets/cycle_drawer.dart';
 import 'package:intl/intl.dart';
 import 'package:structured_writing_protocol/presentation/widgets/confirmation_dialog.dart';
+import 'package:structured_writing_protocol/presentation/session_view.dart';
 
 // Usamos ConsumerWidget para poder "ouvir" os providers.
 class HomePage extends ConsumerWidget {
@@ -39,7 +40,7 @@ class HomePage extends ConsumerWidget {
                       message: "Você quer iniciar um novo ciclo?",
                       onConfirmation: () {
                         ref.read(writingRepositoryProvider).startNewCycle();
-						ref.invalidate(cycleListProvider);
+                        ref.invalidate(cycleListProvider);
                       },
                     ),
                   );
@@ -75,9 +76,19 @@ class HomePage extends ConsumerWidget {
                     const Text("Próxima Sessão"),
                     SessionCard(
                       sessionNumber: activeCycle.completedSessions + 1,
-                      dateFormatted: _getNextSessionDate(),
                       isNext: true,
-                      onPressed: () => {},
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => SessionView(
+                              sessionNumber: activeCycle.completedSessions + 1,
+                               // Podemos melhorar isso depois
+                              sessionDurationInMinutes:
+                                  activeCycle.sessionDuration,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                     const SizedBox(height: 32),
                   ],
@@ -152,10 +163,5 @@ class HomePage extends ConsumerWidget {
 
   String _formatDate(DateTime date) {
     return DateFormat('dd MMM yyyy').format(date);
-  }
-
-  String _getNextSessionDate() {
-    // Por enquanto, retorna hoje. Você pode implementar lógica mais complexa
-    return DateFormat('dd MMM yyyy').format(DateTime.now());
   }
 }

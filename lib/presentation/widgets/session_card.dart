@@ -3,11 +3,11 @@ import 'package:structured_writing_protocol/theme/app_colors.dart';
 
 class SessionCard extends StatelessWidget {
   final int sessionNumber;
-  final String dateFormatted; // ex: "07 ago 2025"
+  final String? dateFormatted; 
   final bool isNext;
   final VoidCallback onPressed;
 
-  const SessionCard({super.key, required this.sessionNumber, required this.dateFormatted, required this.isNext, required this.onPressed});
+  const SessionCard({super.key, this.dateFormatted, required this.sessionNumber, required this.isNext, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -37,16 +37,17 @@ class SessionCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 6),
-              Row(
+              if (dateFormatted != null) Row(
                 children: [
                   const Icon(Icons.calendar_today, size: 14, color: AppColors.mauveGray),
                   const SizedBox(width: 4),
                   Text(
-                    dateFormatted,
+                    dateFormatted!,
                     style: const TextStyle(fontSize: 12, color: AppColors.mauveGray),
                   ),
                 ],
               ),
+
               if (isNext) ...[
                 const SizedBox(height: 6),
                 Row(
