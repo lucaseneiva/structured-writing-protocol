@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:async';
-
-// Importando nossos novos widgets limpos
+import 'package:structured_writing_protocol/presentation/widgets/confirmation_dialog.dart';
 import 'session_flow/instructions_view.dart';
 import 'session_flow/writing_view.dart';
 import 'session_flow/finished_view.dart';
@@ -25,7 +24,7 @@ class SessionView extends ConsumerStatefulWidget {
 
 class _SessionViewState extends ConsumerState<SessionView> {
   var _sessionState = SessionState.instructions;
-  
+
   // A lógica de estado e os controllers continuam aqui
   late final TextEditingController _textController;
   final FocusNode _focusNode = FocusNode();
@@ -50,10 +49,14 @@ class _SessionViewState extends ConsumerState<SessionView> {
     final totalDuration = widget.sessionDurationInMinutes * 60;
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_elapsedSeconds < totalDuration) {
-        setState(() { _elapsedSeconds++; });
+        setState(() {
+          _elapsedSeconds++;
+        });
       } else {
         _timer?.cancel();
-        setState(() { _sessionState = SessionState.finished; });
+        setState(() {
+          _sessionState = SessionState.finished;
+        });
       }
     });
   }
@@ -73,20 +76,41 @@ class _SessionViewState extends ConsumerState<SessionView> {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return PopScope(
-      canPop: _sessionState != SessionState.writing,
-      onPopInvoked: _onPopInvoked,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('Sessão ${widget.sessionNumber}'),
-          // TODO: Mostrar o timer aqui
-        ),
-        body: _buildBody(),
+@override
+Widget build(BuildContext context) {
+  return PopScope(
+    canPop: _sessionState != SessionState.writing,
+    onPopInvokedWithResult: (bool didPop, Object? result) async {
+      if (didPop) {
+        return;
+      }
+
+      if (_sessionState == SessionState.writing) {
+        final shouldExit = await showDialog<bool>(
+          context: context,
+          builder: (context) => ConfirmationDialog(
+            title: "Sair da Sessão?",
+            message: "Seu progresso não salvo será perdido.",
+            onConfirmation: () => Navigator.of(context).pop(true),
+            confirmButtonText: "Sair",
+          ),
+        );
+
+        // If confirmed, pop the Navigator to exit the screen
+        if (shouldExit == true && mounted) {
+          Navigator.of(context).pop();
+        }
+      }
+    },
+    child: Scaffold(
+      appBar: AppBar(
+        title: Text('Sessão ${widget.sessionNumber}'),
+        // TODO: Mostrar o timer aqui
       ),
-    );
-  }
+      body: _buildBody(),
+    ),
+  );
+}
 
   // O buildBody agora é um seletor simples e limpo
   Widget _buildBody() {
@@ -103,21 +127,5 @@ class _SessionViewState extends ConsumerState<SessionView> {
     }
   }
 
-  void _onPopInvoked(bool didPop) async {
-    if (didPop) return;
-    final shouldPop = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Sair da Sessão?"),
-        content: const Text("Seu progresso não salvo será perdido."),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Ficar")),
-          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text("Sair")),
-        ],
-      ),
-    );
-    if (shouldPop ?? false) {
-      Navigator.pop(context);
-    }
-  }
+  
 }

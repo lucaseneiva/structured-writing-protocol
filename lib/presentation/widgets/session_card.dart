@@ -12,7 +12,7 @@ class SessionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final borderColor = isNext ? AppColors.toastedPeach : AppColors.mauveGray;
-
+    
     // O widget principal que será retornado
     Widget cardContent = Container(
       margin: const EdgeInsets.symmetric(vertical: 6),

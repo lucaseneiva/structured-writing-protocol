@@ -38,6 +38,7 @@ class HomePage extends ConsumerWidget {
                     builder: (_) => ConfirmationDialog(
                       title: "Novo Ciclo",
                       message: "Você quer iniciar um novo ciclo?",
+                      
                       onConfirmation: () {
                         ref.read(writingRepositoryProvider).startNewCycle();
                         ref.invalidate(cycleListProvider);
@@ -82,7 +83,7 @@ class HomePage extends ConsumerWidget {
                           MaterialPageRoute(
                             builder: (context) => SessionView(
                               sessionNumber: activeCycle.completedSessions + 1,
-                               // Podemos melhorar isso depois
+                              // Podemos melhorar isso depois
                               sessionDurationInMinutes:
                                   activeCycle.sessionDuration,
                             ),
