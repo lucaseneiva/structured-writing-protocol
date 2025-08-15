@@ -5,7 +5,10 @@ import 'package:structured_writing_protocol/presentation/widgets/confirmation_di
 import 'session_flow/instructions_view.dart';
 import 'session_flow/writing_view.dart';
 import 'session_flow/finished_view.dart';
-
+import 'package:structured_writing_protocol/data/writing_repository_impl.dart';
+import 'package:structured_writing_protocol/domain/entities/session.dart';
+import 'package:uuid/uuid.dart';
+import 'package:structured_writing_protocol/providers.dart';
 enum SessionState { instructions, writing, finished }
 
 class SessionView extends ConsumerStatefulWidget {
@@ -62,9 +65,23 @@ class _SessionViewState extends ConsumerState<SessionView> {
   }
 
   Future<void> _saveSessionAndExit() async {
-    // TODO: Implementar a lógica de salvar com o repositório
-    // await ref.read(writingRepositoryProvider).saveSession(...);
-    // ref.invalidate(cycleListProvider);
+    final activeCycle = ref.read(activeCycleProvider);
+    if (activeCycle == null) return;
+
+    final newSession = Session(
+      id: const Uuid().v4(),
+      text: _textController.text,
+      duration: widget.sessionDurationInMinutes,
+      number: widget.sessionNumber,
+      date: DateTime.now(),
+    );
+
+    await ref
+        .read(writingRepositoryProvider)
+        .saveSession(activeCycle.id, newSession);
+
+    ref.invalidate(cycleListProvider);
+
     if (mounted) Navigator.of(context).pop();
   }
 
@@ -76,41 +93,38 @@ class _SessionViewState extends ConsumerState<SessionView> {
     super.dispose();
   }
 
-@override
-Widget build(BuildContext context) {
-  return PopScope(
-    canPop: _sessionState != SessionState.writing,
-    onPopInvokedWithResult: (bool didPop, Object? result) async {
-      if (didPop) {
-        return;
-      }
-
-      if (_sessionState == SessionState.writing) {
-        final shouldExit = await showDialog<bool>(
-          context: context,
-          builder: (context) => ConfirmationDialog(
-            title: "Sair da Sessão?",
-            message: "Seu progresso não salvo será perdido.",
-            onConfirmation: () => Navigator.of(context).pop(true),
-            confirmButtonText: "Sair",
-          ),
-        );
-
-        // If confirmed, pop the Navigator to exit the screen
-        if (shouldExit == true && mounted) {
-          Navigator.of(context).pop();
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: _sessionState != SessionState.writing,
+      onPopInvokedWithResult: (bool didPop, Object? result) async {
+        if (didPop) {
+          return;
         }
-      }
-    },
-    child: Scaffold(
-      appBar: AppBar(
-        title: Text('Sessão ${widget.sessionNumber}'),
-        // TODO: Mostrar o timer aqui
+
+        if (_sessionState == SessionState.writing) {
+          final shouldExit = await showDialog<bool>(
+            context: context,
+            builder: (context) => ConfirmationDialog(
+              title: "Sair da Sessão?",
+              message: "Seu progresso não salvo será perdido.",
+              onConfirmation: () => Navigator.of(context).pop(true),
+              confirmButtonText: "Sair",
+            ),
+          );
+
+          // If confirmed, pop the Navigator to exit the screen
+          if (shouldExit == true && mounted) {
+            Navigator.of(context).pop();
+          }
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(title: Text('Sessão ${widget.sessionNumber}')),
+        body: _buildBody(),
       ),
-      body: _buildBody(),
-    ),
-  );
-}
+    );
+  }
 
   // O buildBody agora é um seletor simples e limpo
   Widget _buildBody() {
@@ -126,6 +140,4 @@ Widget build(BuildContext context) {
         );
     }
   }
-
-  
 }

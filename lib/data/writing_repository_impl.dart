@@ -15,20 +15,28 @@ class WritingRepositoryImpl implements WritingRepository {
 
   @override
   Future<void> startNewCycle() async {
-    // A lógica de negócio (criar um novo ciclo) mora no repositório.
-    final newCycle = Cycle.newCycle(); // Parâmetros fixos por enquanto
-    
-    // A persistência é delegada ao data source.
+    final newCycle = Cycle.newCycle();
+
     await localDataSource.saveCycle(newCycle);
   }
 
   @override
   Future<void> saveSession(String cycleId, Session session) async {
-    // Lógica futura:
-    // 1. Buscar todos os ciclos
-    // 2. Encontrar o ciclo com o cycleId
-    // 3. Adicionar a nova sessão à lista de sessões do ciclo
-    // 4. Chamar localDataSource.saveCycle(cicloAtualizado)
-    throw UnimplementedError(); // Deixamos assim por enquanto.
+    final allCycles = await localDataSource.getAllCycles();
+
+    final cycleToUpdate = allCycles.firstWhere(
+      (cycle) => cycle.id == cycleId,
+      orElse: () => throw Exception("Cycle with id $cycleId not found"),
+    );
+
+    final updatedSessions = List<Session>.from(cycleToUpdate.sessions)
+      ..add(session);
+
+    final updatedCycle = cycleToUpdate.copyWith(
+      sessions: updatedSessions,
+      completedSessions: cycleToUpdate.completedSessions + 1,
+    );
+
+    await localDataSource.saveCycle(updatedCycle);
   }
 }

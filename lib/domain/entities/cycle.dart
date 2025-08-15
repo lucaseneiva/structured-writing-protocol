@@ -7,7 +7,7 @@ part 'cycle.g.dart';
 class Cycle {
   @HiveField(0)
   final String id;
-  
+
   @HiveField(1)
   final List<Session> sessions;
 
@@ -45,6 +45,22 @@ class Cycle {
       sessionDuration: 1,
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       sessions: [],
+    );
+  }
+
+  Cycle copyWith({
+    String? id,
+    List<Session>? sessions,
+    int? completedSessions,
+    int? totalSessions,
+    int? sessionDuration,
+  }) {
+    return Cycle(
+      id: id ?? this.id,
+      sessions: sessions ?? this.sessions,
+      completedSessions: completedSessions ?? this.completedSessions,
+      totalSessions: totalSessions ?? this.totalSessions,
+      sessionDuration: sessionDuration ?? this.sessionDuration,
     );
   }
 
