@@ -20,7 +20,7 @@ class HomePage extends ConsumerWidget {
     if (activeCycle == null) {
       return Scaffold(
         appBar: AppBar(centerTitle: true, title: const Text("Ciclo Atual")),
-        // drawer: CycleDrawer(), arrumar o drawer
+        drawer: CycleDrawer(),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

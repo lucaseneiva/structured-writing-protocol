@@ -49,7 +49,7 @@ class _SessionViewState extends ConsumerState<SessionView> {
   }
 
   void _startTimer() {
-    final totalDuration = widget.sessionDurationInMinutes * 60;
+    final totalDuration = widget.sessionDurationInMinutes * 1;
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_elapsedSeconds < totalDuration) {
         setState(() {
