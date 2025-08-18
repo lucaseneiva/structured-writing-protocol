@@ -5,10 +5,10 @@ import 'package:structured_writing_protocol/presentation/widgets/confirmation_di
 import 'session_flow/instructions_view.dart';
 import 'session_flow/writing_view.dart';
 import 'session_flow/finished_view.dart';
-import 'package:structured_writing_protocol/data/writing_repository_impl.dart';
 import 'package:structured_writing_protocol/domain/entities/session.dart';
 import 'package:uuid/uuid.dart';
 import 'package:structured_writing_protocol/providers.dart';
+
 enum SessionState { instructions, writing, finished }
 
 class SessionView extends ConsumerStatefulWidget {

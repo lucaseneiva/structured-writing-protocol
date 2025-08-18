@@ -15,7 +15,6 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final activeCycle = ref.watch(activeCycleProvider);
-    final cycles = ref.watch(cycleListProvider);
 
     if (activeCycle == null) {
       return Scaffold(
