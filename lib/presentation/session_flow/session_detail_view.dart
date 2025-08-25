@@ -211,30 +211,6 @@ class SessionDetailView extends StatelessWidget {
     );
   }
 
-  Widget _buildStatItem(BuildContext context, String label, String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            color: AppColors.mauveGray,
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: const TextStyle(
-            color: AppColors.velvetCharcoal,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ],
-    );
-  }
 
   String _formatDate(DateTime date) {
     return DateFormat('dd/MM/yyyy').format(date);
