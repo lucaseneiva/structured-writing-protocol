@@ -37,7 +37,7 @@ class HomePage extends ConsumerWidget {
                     builder: (_) => ConfirmationDialog(
                       title: "Novo Ciclo",
                       message: "Você quer iniciar um novo ciclo?",
-                      
+
                       onConfirmation: () {
                         ref.read(writingRepositoryProvider).startNewCycle();
                         ref.invalidate(cycleListProvider);
@@ -68,6 +68,29 @@ class HomePage extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 32),
+              if (activeCycle.isDailySessionDone(DateTime.now())) ...[
+                Container(
+                  padding: EdgeInsets.all(12),
+                  margin: EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.shade50,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.blue.shade200),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.check_circle, color: Colors.blue.shade600),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          "Sessão de hoje já concluída! Volte amanhã para continuar.",
+                          style: TextStyle(color: Colors.blue.shade700),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -75,20 +98,24 @@ class HomePage extends ConsumerWidget {
                       activeCycle.totalSessions) ...[
                     const Text("Próxima Sessão"),
                     SessionCard(
+                      isCompleted: activeCycle.isDailySessionDone(DateTime.now()),
                       sessionNumber: activeCycle.completedSessions + 1,
                       isNext: true,
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => SessionView(
-                              sessionNumber: activeCycle.completedSessions + 1,
-                              // Podemos melhorar isso depois
-                              sessionDurationInMinutes:
-                                  activeCycle.sessionDuration,
-                            ),
-                          ),
-                        );
-                      },
+                      onPressed: activeCycle.isDailySessionDone(DateTime.now())
+                          ? null
+                          : () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => SessionView(
+                                    sessionNumber:
+                                        activeCycle.completedSessions + 1,
+                                    // Podemos melhorar isso depois
+                                    sessionDurationInMinutes:
+                                        activeCycle.sessionDuration,
+                                  ),
+                                ),
+                              );
+                            },
                     ),
                     const SizedBox(height: 32),
                   ],
@@ -105,6 +132,7 @@ class HomePage extends ConsumerWidget {
                         final session = entry.value;
 
                         return SessionCard(
+                          isCompleted: false,
                           sessionNumber: index + 1,
                           dateFormatted: _formatDate(session.date),
                           isNext: false,

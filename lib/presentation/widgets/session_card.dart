@@ -3,11 +3,18 @@ import 'package:structured_writing_protocol/theme/app_colors.dart';
 
 class SessionCard extends StatelessWidget {
   final int sessionNumber;
-  final String? dateFormatted; 
+  final String? dateFormatted;
   final bool isNext;
-  final VoidCallback onPressed;
-
-  const SessionCard({super.key, this.dateFormatted, required this.sessionNumber, required this.isNext, required this.onPressed});
+  final VoidCallback? onPressed;
+  final bool isCompleted;
+  const SessionCard({
+    super.key,
+    this.dateFormatted,
+    required this.sessionNumber,
+    required this.isNext,
+    required this.onPressed,
+    required this.isCompleted,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -37,26 +44,41 @@ class SessionCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 6),
-              if (dateFormatted != null) Row(
-                children: [
-                  const Icon(Icons.calendar_today, size: 14, color: AppColors.mauveGray),
-                  const SizedBox(width: 4),
-                  Text(
-                    dateFormatted!,
-                    style: const TextStyle(fontSize: 12, color: AppColors.mauveGray),
-                  ),
-                ],
-              ),
+              if (dateFormatted != null)
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.calendar_today,
+                      size: 14,
+                      color: AppColors.mauveGray,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      dateFormatted!,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: AppColors.mauveGray,
+                      ),
+                    ),
+                  ],
+                ),
 
               if (isNext) ...[
                 const SizedBox(height: 6),
                 Row(
                   children: [
-                    const Icon(Icons.access_time, size: 14, color: AppColors.mauveGray),
+                    const Icon(
+                      Icons.access_time,
+                      size: 14,
+                      color: AppColors.mauveGray,
+                    ),
                     const SizedBox(width: 4),
                     const Text(
                       "15 minutos",
-                      style: TextStyle(fontSize: 12, color: AppColors.mauveGray),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.mauveGray,
+                      ),
                     ),
                   ],
                 ),
@@ -65,18 +87,26 @@ class SessionCard extends StatelessWidget {
           ),
 
           // Direita - Botão (só aparece se 'isNext' for verdadeiro)
-          if (isNext)
-            ElevatedButton(
-              onPressed: onPressed,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.toastedPeach,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                elevation: 0,
-              ),
-              child: const Text("Iniciar"),
-            ),
+          isNext
+              ? (isCompleted
+                    ? ElevatedButton(
+                        onPressed: onPressed,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.toastedPeach,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: const Text("Iniciar"),
+                      )
+                    : Icon(Icons.check_circle, color: AppColors.toastedPeach))
+              : const SizedBox.shrink(), // se não for "isNext"
         ],
       ),
     );
@@ -85,7 +115,9 @@ class SessionCard extends StatelessWidget {
     if (!isNext) {
       return InkWell(
         onTap: onPressed,
-        borderRadius: BorderRadius.circular(12), // Para o efeito de splash seguir a borda
+        borderRadius: BorderRadius.circular(
+          12,
+        ), // Para o efeito de splash seguir a borda
         child: cardContent,
       );
     }
