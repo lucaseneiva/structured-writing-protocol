@@ -7,7 +7,8 @@
 ![Clean Architecture](https://img.shields.io/badge/Architecture-Clean-red?style=for-the-badge)
 
 <p align="center">
-  <img src="URL_DO_SEU_GIF_OU_IMAGEM_AQUI" alt="Demonstração do App" width="300"/>
+  <img src="https://github.com/user-attachments/assets/decb05d4-2e36-426d-a677-b751eecefe90"
+lt="Demonstração do App" width="300"/>
 </p>
 
 **Structured Writing Protocol** é um aplicativo de escrita focado e minimalista, projetado para ajudar usuários a desenvolverem consistência através de sessões de escrita cronometradas. Mais do que uma ferramenta, este projeto é um estudo de caso prático onde demonstro minha proficiência na construção de aplicações Flutter robustas, com foco em **arquitetura de software**, **persistência de dados local** e **gerenciamento de estado reativo**.
