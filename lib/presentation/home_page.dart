@@ -7,6 +7,7 @@ import 'package:structured_writing_protocol/presentation/widgets/cycle_drawer.da
 import 'package:intl/intl.dart';
 import 'package:structured_writing_protocol/presentation/widgets/confirmation_dialog.dart';
 import 'package:structured_writing_protocol/presentation/session_view.dart';
+import 'package:structured_writing_protocol/theme/app_colors.dart';
 
 // Usamos ConsumerWidget para poder "ouvir" os providers.
 class HomePage extends ConsumerWidget {
@@ -68,60 +69,51 @@ class HomePage extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 32),
-              if (activeCycle.isDailySessionDone(DateTime.now())) ...[
-                Container(
-                  padding: EdgeInsets.all(12),
-                  margin: EdgeInsets.only(bottom: 16),
-                  decoration: BoxDecoration(
-                    color: Colors.blue.shade50,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.blue.shade200),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.check_circle, color: Colors.blue.shade600),
-                      SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          "Sessão de hoje já concluída! Volte amanhã para continuar.",
-                          style: TextStyle(color: Colors.blue.shade700),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (activeCycle.completedSessions <
-                      activeCycle.totalSessions) ...[
-                    const Text("Próxima Sessão"),
-                    SessionCard(
-                      isCompleted: activeCycle.isDailySessionDone(DateTime.now()),
-                      sessionNumber: activeCycle.completedSessions + 1,
-                      isNext: true,
-                      onPressed: activeCycle.isDailySessionDone(DateTime.now())
-                          ? null
-                          : () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => SessionView(
-                                    sessionNumber:
-                                        activeCycle.completedSessions + 1,
-                                    // Podemos melhorar isso depois
-                                    sessionDurationInMinutes:
-                                        activeCycle.sessionDuration,
+                  if ((activeCycle.completedSessions <
+                      activeCycle.totalSessions)) ...[
+                    const Text("Sessão de Hoje"),
+
+                    
+                    !activeCycle.isTodaysSessionDone(DateTime.now())?
+                    
+                      SessionCard(
+                        sessionNumber: activeCycle.completedSessions + 1,
+                        isTodaysSession: true,
+                        onPressed: activeCycle.isTodaysSessionDone(DateTime.now())
+                            ? null
+                            : () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => SessionView(
+                                      sessionNumber:
+                                          activeCycle.completedSessions + 1,
+                                      // Podemos melhorar isso depois
+                                      sessionDurationInMinutes:
+                                          activeCycle.sessionDuration,
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
-                    ),
+                                );
+                              },
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Text(
+                          "Sessão de hoje já concluída. Volte amanhã para continuar.",
+                          style: TextStyle(
+                            color: Colors.grey.shade500,
+                            fontSize: 16,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ),
                     const SizedBox(height: 32),
                   ],
 
                   if (activeCycle.sessions.isNotEmpty) ...[
-                    const Text("Sessões Anteriores"),
+                    const Text("Sessões Concluídas"),
                     ListView(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
@@ -132,10 +124,9 @@ class HomePage extends ConsumerWidget {
                         final session = entry.value;
 
                         return SessionCard(
-                          isCompleted: false,
                           sessionNumber: index + 1,
                           dateFormatted: _formatDate(session.date),
-                          isNext: false,
+                          isTodaysSession: false,
                           onPressed: () => {
                             // Navegar para ver detalhes da sessão
                           },

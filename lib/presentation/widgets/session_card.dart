@@ -4,23 +4,20 @@ import 'package:structured_writing_protocol/theme/app_colors.dart';
 class SessionCard extends StatelessWidget {
   final int sessionNumber;
   final String? dateFormatted;
-  final bool isNext;
+  final bool isTodaysSession;
   final VoidCallback? onPressed;
-  final bool isCompleted;
   const SessionCard({
     super.key,
     this.dateFormatted,
     required this.sessionNumber,
-    required this.isNext,
+    required this.isTodaysSession,
     required this.onPressed,
-    required this.isCompleted,
   });
 
   @override
   Widget build(BuildContext context) {
-    final borderColor = isNext ? AppColors.toastedPeach : AppColors.mauveGray;
+    final borderColor = isTodaysSession ? AppColors.toastedPeach : AppColors.mauveGray;
     
-    // O widget principal que será retornado
     Widget cardContent = Container(
       margin: const EdgeInsets.symmetric(vertical: 6),
       padding: const EdgeInsets.all(16),
@@ -44,7 +41,6 @@ class SessionCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 6),
-              if (dateFormatted != null)
                 Row(
                   children: [
                     const Icon(
@@ -54,7 +50,7 @@ class SessionCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      dateFormatted!,
+                      dateFormatted != null? dateFormatted! : 'Hoje',
                       style: const TextStyle(
                         fontSize: 12,
                         color: AppColors.mauveGray,
@@ -62,67 +58,19 @@ class SessionCard extends StatelessWidget {
                     ),
                   ],
                 ),
-
-              if (isNext) ...[
-                const SizedBox(height: 6),
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.access_time,
-                      size: 14,
-                      color: AppColors.mauveGray,
-                    ),
-                    const SizedBox(width: 4),
-                    const Text(
-                      "15 minutos",
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: AppColors.mauveGray,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
             ],
           ),
-
-          // Direita - Botão (só aparece se 'isNext' for verdadeiro)
-          isNext
-              ? (isCompleted
-                    ? ElevatedButton(
-                        onPressed: onPressed,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.toastedPeach,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          elevation: 0,
-                        ),
-                        child: const Text("Iniciar"),
-                      )
-                    : Icon(Icons.check_circle, color: AppColors.toastedPeach))
-              : const SizedBox.shrink(), // se não for "isNext"
         ],
       ),
     );
 
-    // Se NÃO for a próxima sessão, envolve o card com InkWell para torná-lo clicável
-    if (!isNext) {
-      return InkWell(
+  return InkWell(
         onTap: onPressed,
         borderRadius: BorderRadius.circular(
           12,
-        ), // Para o efeito de splash seguir a borda
+        ),
         child: cardContent,
       );
     }
 
-    // Se for a próxima sessão, retorna o card como estava, sem o InkWell
-    return cardContent;
-  }
 }

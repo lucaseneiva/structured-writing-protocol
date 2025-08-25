@@ -17,7 +17,7 @@ class FakeWritingRepositoryImpl implements WritingRepository {
   Future<void> startNewCycle() async {
     await Future.delayed(const Duration(milliseconds: 100));
     
-    _cycles.add(Cycle.newCycle());
+    _cycles.add(Cycle.newCycle("aaa"));
     print("Ciclo adicionado! Total de ciclos: ${_cycles.length}");
   }
 

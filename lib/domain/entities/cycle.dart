@@ -56,7 +56,7 @@ class Cycle {
 
   bool isEmpty() => id.isEmpty;
 
-  bool isDailySessionDone(DateTime? referenceDate) {
+  bool isTodaysSessionDone(DateTime? referenceDate) {
     DateTime targetDate = referenceDate ?? DateTime.now();
     return sessions.any((session) => _isSameDay(session.date, targetDate));
   }
