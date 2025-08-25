@@ -2,6 +2,7 @@ import 'package:structured_writing_protocol/data/writing_local_data_source.dart'
 import 'package:structured_writing_protocol/domain/entities/cycle.dart';
 import 'package:structured_writing_protocol/domain/entities/session.dart';
 import 'package:structured_writing_protocol/domain/repositories/writing_repository.dart';
+import 'package:uuid/uuid.dart';
 
 class WritingRepositoryImpl implements WritingRepository {
   final IWritingLocalDataSource localDataSource;
@@ -15,7 +16,7 @@ class WritingRepositoryImpl implements WritingRepository {
 
   @override
   Future<void> startNewCycle() async {
-    final newCycle = Cycle.newCycle();
+    final newCycle = Cycle.newCycle(Uuid().v4());
 
     await localDataSource.saveCycle(newCycle);
   }
@@ -34,7 +35,6 @@ class WritingRepositoryImpl implements WritingRepository {
 
     final updatedCycle = cycleToUpdate.copyWith(
       sessions: updatedSessions,
-      completedSessions: cycleToUpdate.completedSessions + 1,
     );
 
     await localDataSource.saveCycle(updatedCycle);

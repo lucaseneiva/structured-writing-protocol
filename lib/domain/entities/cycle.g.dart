@@ -17,9 +17,8 @@ class CycleAdapter extends TypeAdapter<Cycle> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Cycle(
-      completedSessions: fields[2] as int,
-      totalSessions: fields[3] as int,
-      sessionDuration: fields[4] as int,
+      totalSessions: fields[2] as int,
+      sessionDuration: fields[3] as int,
       id: fields[0] as String,
       sessions: (fields[1] as List).cast<Session>(),
     );
@@ -28,16 +27,14 @@ class CycleAdapter extends TypeAdapter<Cycle> {
   @override
   void write(BinaryWriter writer, Cycle obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
       ..write(obj.sessions)
       ..writeByte(2)
-      ..write(obj.completedSessions)
-      ..writeByte(3)
       ..write(obj.totalSessions)
-      ..writeByte(4)
+      ..writeByte(3)
       ..write(obj.sessionDuration);
   }
 

@@ -12,16 +12,12 @@ class Cycle {
   final List<Session> sessions;
 
   @HiveField(2)
-  final int completedSessions;
-
-  @HiveField(3)
   final int totalSessions;
 
-  @HiveField(4)
+  @HiveField(3)
   final int sessionDuration;
 
   Cycle({
-    required this.completedSessions,
     required this.totalSessions,
     required this.sessionDuration,
     required this.id,
@@ -29,21 +25,14 @@ class Cycle {
   });
 
   factory Cycle.empty() {
-    return Cycle(
-      id: '',
-      sessions: [],
-      completedSessions: 0,
-      totalSessions: 0,
-      sessionDuration: 0,
-    );
+    return Cycle(id: '', sessions: [], totalSessions: 0, sessionDuration: 0);
   }
 
-  factory Cycle.newCycle() {
+  factory Cycle.newCycle(String id) {
     return Cycle(
-      completedSessions: 0,
       totalSessions: 4,
       sessionDuration: 1,
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      id: id,
       sessions: [],
     );
   }
@@ -51,22 +40,30 @@ class Cycle {
   Cycle copyWith({
     String? id,
     List<Session>? sessions,
-    int? completedSessions,
     int? totalSessions,
     int? sessionDuration,
   }) {
     return Cycle(
       id: id ?? this.id,
       sessions: sessions ?? this.sessions,
-      completedSessions: completedSessions ?? this.completedSessions,
       totalSessions: totalSessions ?? this.totalSessions,
       sessionDuration: sessionDuration ?? this.sessionDuration,
     );
   }
 
+  int get completedSessions => sessions.length;
   bool get isActive => completedSessions < totalSessions;
 
-  bool isEmpty() {
-    return id == '' ? true : false;
+  bool isEmpty() => id.isEmpty;
+
+  bool isDailySessionDone(DateTime? referenceDate) {
+    DateTime targetDate = referenceDate ?? DateTime.now();
+    return sessions.any((session) => _isSameDay(session.date, targetDate));
+  }
+
+  bool _isSameDay(DateTime date1, DateTime date2) {
+    return date1.year == date2.year &&
+        date1.month == date2.month &&
+        date1.day == date2.day;
   }
 }
