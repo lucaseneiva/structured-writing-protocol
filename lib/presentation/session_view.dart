@@ -8,6 +8,7 @@ import 'session_flow/finished_view.dart';
 import 'package:structured_writing_protocol/domain/entities/session.dart';
 import 'package:uuid/uuid.dart';
 import 'package:structured_writing_protocol/providers.dart';
+import 'package:flutter/foundation.dart';
 
 enum SessionState { instructions, writing, finished }
 
@@ -28,7 +29,6 @@ class SessionView extends ConsumerStatefulWidget {
 class _SessionViewState extends ConsumerState<SessionView> {
   var _sessionState = SessionState.instructions;
 
-  // A lógica de estado e os controllers continuam aqui
   late final TextEditingController _textController;
   final FocusNode _focusNode = FocusNode();
   Timer? _timer;
@@ -50,7 +50,7 @@ class _SessionViewState extends ConsumerState<SessionView> {
   }
 
   void _startTimer() {
-    final totalDuration = widget.sessionDurationInMinutes * 15;
+    final totalDuration = widget.sessionDurationInMinutes * 60;
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_elapsedSeconds < totalDuration) {
         setState(() {
@@ -123,8 +123,18 @@ class _SessionViewState extends ConsumerState<SessionView> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(title: Text('Sessão ${widget.sessionNumber}')),
+        appBar: AppBar(title: Text('Sessão ${widget.sessionNumber}'), actions: [
+          if (kDebugMode)
+            IconButton(
+              icon: const Icon(Icons.fast_forward_rounded),
+              tooltip: 'Avançar um dia (Debug)',
+              onPressed: () {
+                _sessionState = SessionState.finished;
+              },
+            ),
+        ],),
         body: _buildBody(),
+        
       ),
     );
   }

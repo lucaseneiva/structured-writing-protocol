@@ -31,7 +31,7 @@ class Cycle {
   factory Cycle.newCycle(String id) {
     return Cycle(
       totalSessions: 4,
-      sessionDuration: 1,
+      sessionDuration: 15,
       id: id,
       sessions: [],
     );
