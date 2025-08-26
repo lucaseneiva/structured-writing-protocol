@@ -33,6 +33,7 @@ class _SessionViewState extends ConsumerState<SessionView> {
   final FocusNode _focusNode = FocusNode();
   Timer? _timer;
   double _elapsedSeconds = 0;
+    
 
   @override
   void initState() {
@@ -66,6 +67,8 @@ class _SessionViewState extends ConsumerState<SessionView> {
 
   Future<void> _saveSessionAndExit() async {
     final activeCycle = ref.read(activeCycleProvider);
+    final currentDate = ref.read(currentDateProvider);
+
     if (activeCycle == null) return;
 
     final newSession = Session(
@@ -73,7 +76,7 @@ class _SessionViewState extends ConsumerState<SessionView> {
       text: _textController.text,
       duration: widget.sessionDurationInMinutes,
       number: widget.sessionNumber,
-      date: DateTime.now(),
+      date: currentDate,
     );
 
     await ref

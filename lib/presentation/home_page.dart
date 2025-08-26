@@ -7,7 +7,7 @@ import 'package:structured_writing_protocol/presentation/widgets/cycle_drawer.da
 import 'package:intl/intl.dart';
 import 'package:structured_writing_protocol/presentation/widgets/confirmation_dialog.dart';
 import 'package:structured_writing_protocol/presentation/session_view.dart';
-import 'package:structured_writing_protocol/theme/app_colors.dart';
+import 'package:flutter/foundation.dart';
 
 // Usamos ConsumerWidget para poder "ouvir" os providers.
 class HomePage extends ConsumerWidget {
@@ -16,6 +16,7 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final activeCycle = ref.watch(activeCycleProvider);
+    final now = ref.watch(currentDateProvider);
 
     if (activeCycle == null) {
       return Scaffold(
@@ -55,7 +56,24 @@ class HomePage extends ConsumerWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(centerTitle: true, title: const Text("Ciclo Atual")),
+      appBar: AppBar(
+        centerTitle: true,
+        title: const Text("Ciclo Atual"),
+        actions: [
+          if (kDebugMode)
+            IconButton(
+              icon: const Icon(Icons.fast_forward_rounded),
+              tooltip: 'Avançar um dia (Debug)',
+              onPressed: () {
+                final currentState = ref.read(currentDateProvider);
+                ref.read(currentDateProvider.notifier).state = currentState.add(
+                  const Duration(days: 1),
+                );
+              },
+            ),
+        ],
+      ),
+	  
       drawer: CycleDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(32.0),
@@ -76,39 +94,37 @@ class HomePage extends ConsumerWidget {
                       activeCycle.totalSessions)) ...[
                     const Text("Sessão de Hoje"),
 
-                    
-                    !activeCycle.isTodaysSessionDone(DateTime.now())?
-                    
-                      SessionCard(
-                        sessionNumber: activeCycle.completedSessions + 1,
-                        isTodaysSession: true,
-                        onPressed: activeCycle.isTodaysSessionDone(DateTime.now())
-                            ? null
-                            : () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => SessionView(
-                                      sessionNumber:
-                                          activeCycle.completedSessions + 1,
-                                      // Podemos melhorar isso depois
-                                      sessionDurationInMinutes:
-                                          activeCycle.sessionDuration,
-                                    ),
-                                  ),
-                                );
-                              },
-                      )
-                    : Padding(
-                        padding: const EdgeInsets.only(top: 16),
-                        child: Text(
-                          "Sessão de hoje já concluída. Volte amanhã para continuar.",
-                          style: TextStyle(
-                            color: Colors.grey.shade500,
-                            fontSize: 16,
-                            fontStyle: FontStyle.italic,
+                    !activeCycle.isTodaysSessionDone(now)
+                        ? SessionCard(
+                            sessionNumber: activeCycle.completedSessions + 1,
+                            isTodaysSession: true,
+                            onPressed: activeCycle.isTodaysSessionDone(now)
+                                ? null
+                                : () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => SessionView(
+                                          sessionNumber:
+                                              activeCycle.completedSessions + 1,
+                                          // Podemos melhorar isso depois
+                                          sessionDurationInMinutes:
+                                              activeCycle.sessionDuration,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.only(top: 16),
+                            child: Text(
+                              "Sessão de hoje já concluída. Volte amanhã para continuar.",
+                              style: TextStyle(
+                                color: Colors.grey.shade500,
+                                fontSize: 16,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
                     const SizedBox(height: 32),
                   ],
 
