@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:structured_writing_protocol/theme/app_colors.dart';
 
 class FinishedView extends StatelessWidget {
   final String text;
@@ -27,9 +28,9 @@ class FinishedView extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Colors.transparent,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade300),
+                border: Border.all(color: AppColors.velvetCharcoal.withAlpha(127)),
               ),
               child: SingleChildScrollView(
                 child: Text(text, style: const TextStyle(fontSize: 16)),
