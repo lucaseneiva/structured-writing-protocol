@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:async';
 import 'package:structured_writing_protocol/presentation/widgets/confirmation_dialog.dart';
+import 'package:structured_writing_protocol/presentation/widgets/pizza_timer.dart';
 import 'session_flow/instructions_view.dart';
 import 'session_flow/writing_view.dart';
 import 'session_flow/finished_view.dart';
@@ -33,7 +34,7 @@ class _SessionViewState extends ConsumerState<SessionView> {
   final FocusNode _focusNode = FocusNode();
   Timer? _timer;
   double _elapsedSeconds = 0;
-    
+  double totalDuration = 1;
 
   @override
   void initState() {
@@ -50,8 +51,8 @@ class _SessionViewState extends ConsumerState<SessionView> {
   }
 
   void _startTimer() {
-    final totalDuration = widget.sessionDurationInMinutes * 60;
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      totalDuration = widget.sessionDurationInMinutes * 60;
       if (_elapsedSeconds < totalDuration) {
         setState(() {
           _elapsedSeconds++;
@@ -98,6 +99,8 @@ class _SessionViewState extends ConsumerState<SessionView> {
 
   @override
   Widget build(BuildContext context) {
+    print('$_elapsedSeconds/$totalDuration');
+
     return PopScope(
       canPop: _sessionState != SessionState.writing,
       onPopInvokedWithResult: (bool didPop, Object? result) async {
@@ -122,19 +125,28 @@ class _SessionViewState extends ConsumerState<SessionView> {
           }
         }
       },
+      
       child: Scaffold(
-        appBar: AppBar(title: Text('Sessão ${widget.sessionNumber}'), actions: [
-          if (kDebugMode)
-            IconButton(
-              icon: const Icon(Icons.fast_forward_rounded),
-              tooltip: 'Avançar um dia (Debug)',
-              onPressed: () {
-                _sessionState = SessionState.finished;
-              },
-            ),
-        ],),
+        appBar: AppBar(
+          title: Text('Sessão ${widget.sessionNumber}'),
+          actions: [
+            
+            if (_sessionState == SessionState.writing) ...[
+              PizzaTimer(progress: _elapsedSeconds / totalDuration),
+              if (kDebugMode)
+              IconButton(
+                icon: const Icon(Icons.fast_forward_rounded),
+                tooltip: 'Pular Escrita (Debug)',
+                onPressed: () {
+                  _sessionState = SessionState.finished;
+                },
+              ),
+            ],
+
+            SizedBox(width: 16),
+          ],
+        ),
         body: _buildBody(),
-        
       ),
     );
   }
